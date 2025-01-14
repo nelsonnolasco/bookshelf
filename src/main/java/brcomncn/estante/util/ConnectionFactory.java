@@ -8,7 +8,7 @@ public class ConnectionFactory {
     // Corrigido o nome do banco de dados na URL
     private static final String URL = "jdbc:mysql://localhost:3306/estante_livros?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
-    private static final String PASSWORD = "sua_senha"; // Coloque sua senha aqui
+    private static final String PASSWORD = "ncn262730"; // Colocar senha aqui
 
     static {
         try {
@@ -22,9 +22,9 @@ public class ConnectionFactory {
         try {
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            System.err.println("Erro ao conectar ao banco de dados: " + e.getMessage());
+            System.err.println(STR."Erro ao conectar ao banco de dados: \{e.getMessage()}");
             e.printStackTrace();
-            throw new SQLException("Erro ao conectar ao banco de dados: " + e.getMessage(), e);
+            throw new SQLException(STR."Erro ao conectar ao banco de dados: \{e.getMessage()}", e);
         }
     }
 
@@ -32,9 +32,9 @@ public class ConnectionFactory {
     public void testarConexao() {
         try (Connection conn = getConnection()) {
             System.out.println("Conexão estabelecida com sucesso!");
-            System.out.println("Database: " + conn.getCatalog());
+            System.out.println(STR."Database: \{conn.getCatalog()}");
         } catch (SQLException e) {
-            System.err.println("Erro ao testar conexão: " + e.getMessage());
+            System.err.println(STR."Erro ao testar conexão: \{e.getMessage()}");
             e.printStackTrace();
         }
     }

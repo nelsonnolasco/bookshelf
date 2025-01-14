@@ -294,17 +294,16 @@ public class Main {
         }
 
         for (Emprestimo emprestimo : emprestimos) {
-            System.out.println("\nLivro: " + emprestimo.getLivro().getTitulo());
-            System.out.println("Amigo: " + emprestimo.getAmigo().getNome());
-            System.out.println("Data Empréstimo: " +
-                    emprestimo.getDataEmprestimo().format(formatter));
-            System.out.println("Data Devolução Prevista: " +
-                    emprestimo.getDataDevolucaoPrevista().format(formatter));
+            System.out.println(STR."""
+
+Livro: \{emprestimo.getLivro().getTitulo()}""");
+            System.out.println(STR."Amigo: \{emprestimo.getAmigo().getNome()}");
+            System.out.println(STR."Data Empréstimo: \{emprestimo.getDataEmprestimo().format(formatter)}");
+            System.out.println(STR."Data Devolução Prevista: \{emprestimo.getDataDevolucaoPrevista().format(formatter)}");
             if (emprestimo.getDataDevolucaoReal() != null) {
-                System.out.println("Data Devolução Real: " +
-                        emprestimo.getDataDevolucaoReal().format(formatter));
+                System.out.println(STR."Data Devolução Real: \{emprestimo.getDataDevolucaoReal().format(formatter)}");
             }
-            System.out.println("Status: " + emprestimo.getStatus().getDescricao());
+            System.out.println(STR."Status: \{emprestimo.getStatus().getDescricao()}");
             System.out.println("------------------------");
         }
     }
