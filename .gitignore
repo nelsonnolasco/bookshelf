@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Arquivos de configuração com senhas ###
+src/main/resources/*.properties

@@ -1,161 +1,311 @@
 package brcomncn.estante;
 
+
+import brcomncn.estante.model.Amigo;
+import brcomncn.estante.model.Emprestimo;
 import brcomncn.estante.model.Livro;
-import brcomncn.estante.service.IsbnService;
-import brcomncn.estante.dao.LivroDAO;
+import brcomncn.estante.service.AmigoService;
+import brcomncn.estante.service.BooksApiService;
+import brcomncn.estante.service.EmprestimoService;
+import brcomncn.estante.service.LivroService;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
-import java.time.LocalDateTime;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final LivroDAO livroDAO = new LivroDAO();
-    private static final IsbnService isbnService = new IsbnService();
+    private static final LivroService livroService = new LivroService();
+    private static final AmigoService amigoService = new AmigoService();
+    private static final EmprestimoService emprestimoService = new EmprestimoService();
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final BooksApiService booksApiService = new BooksApiService();
 
     public static void main(String[] args) {
-        while (true) {
-            exibirMenu();
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Limpa o buffer
+        boolean continuar = true;
 
-            switch (opcao) {
-                case 1:
-                    cadastrarLivro();
-                    break;
-                case 2:
-                    cadastrarAmigo();
-                    break;
-                case 3:
-                    emprestarLivro();
-                    break;
-                case 4:
-                    devolverLivro();
-                    break;
-                case 5:
-                    listarLivros();
-                    break;
-                case 0:
-                    System.out.println("Saindo...");
-                    return;
-                default:
-                    System.out.println("Opção inválida!");
+        while (continuar) {
+            try {
+                exibirMenu();
+                int opcao = Integer.parseInt(scanner.nextLine());
+
+                switch (opcao) {
+                    case 1:
+                        cadastrarLivro();
+                        break;
+                    case 2:
+                        cadastrarAmigo();
+                        break;
+                    case 3:
+                        realizarEmprestimo();
+                        break;
+                    case 4:
+                        realizarDevolucao();
+                        break;
+                    case 5:
+                        listarLivros();
+                        break;
+                    case 6:
+                        listarAmigos();
+                        break;
+                    case 7:
+                        listarEmprestimos();
+                        break;
+                    case 8:
+                        System.out.println("Saindo do sistema...");
+                        continuar = false;
+                        break;
+                    default:
+                        System.out.println("Opção inválida!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor, digite um número válido.");
+            } catch (SQLException e) {
+                System.out.println("Erro ao acessar o banco de dados: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Erro: " + e.getMessage());
             }
         }
+        scanner.close();
     }
 
     private static void exibirMenu() {
-        System.out.println("\n=== ESTANTE DE LIVROS ===");
-        System.out.println("1. Cadastrar novo livro");
-        System.out.println("2. Cadastrar amigo");
-        System.out.println("3. Emprestar livro");
-        System.out.println("4. Devolver livro");
-        System.out.println("5. Listar livros");
-        System.out.println("0. Sair");
+        System.out.println("\n=== SISTEMA DE BIBLIOTECA ===");
+        System.out.println("1. Cadastrar Livro");
+        System.out.println("2. Cadastrar Amigo");
+        System.out.println("3. Realizar Empréstimo");
+        System.out.println("4. Realizar Devolução");
+        System.out.println("5. Listar Livros");
+        System.out.println("6. Listar Amigos");
+        System.out.println("7. Listar Empréstimos");
+        System.out.println("8. Sair");
         System.out.print("Escolha uma opção: ");
     }
 
-    private static void cadastrarLivro() {
-        try {
-            System.out.print("Digite o ISBN do livro: ");
-            String isbn = scanner.nextLine();
+    private static void cadastrarLivro() throws SQLException {
+        System.out.println("\n=== CADASTRO DE LIVRO ===");
 
-            // Verifica se o livro já existe
-            if (livroDAO.buscarPorIsbn(isbn).isPresent()) {
-                System.out.println("Livro já cadastrado!");
-                return;
+        System.out.print("ISBN: ");
+        String isbn = scanner.nextLine().trim();
+
+        try {
+            Livro livro = booksApiService.buscarLivroPorIsbn(isbn);
+
+            // Mostra os dados encontrados e permite edição
+            System.out.println("\nDados encontrados:");
+            System.out.println("Título: " + livro.getTitulo());
+            System.out.println("Autor: " + livro.getAutor());
+            System.out.println("Editora: " + livro.getEditora());
+            System.out.println("Ano de Publicação: " + livro.getAnoPublicacao());
+            System.out.println("Número de Páginas: " + livro.getNumPaginas());
+
+            System.out.println("\nDeseja editar algum dado? (S/N)");
+            String resposta = scanner.nextLine().trim().toUpperCase();
+
+            if (resposta.equals("S")) {
+                System.out.println("\nPressione ENTER para manter o valor atual");
+
+                System.out.print("Título (" + livro.getTitulo() + "): ");
+                String novoTitulo = scanner.nextLine().trim();
+                if (!novoTitulo.isEmpty()) {
+                    livro.setTitulo(novoTitulo);
+                }
+
+                System.out.print("Autor (" + livro.getAutor() + "): ");
+                String novoAutor = scanner.nextLine().trim();
+                if (!novoAutor.isEmpty()) {
+                    livro.setAutor(novoAutor);
+                }
+
+                System.out.print("Editora (" + livro.getEditora() + "): ");
+                String novaEditora = scanner.nextLine().trim();
+                if (!novaEditora.isEmpty()) {
+                    livro.setEditora(novaEditora);
+                }
+
+                System.out.print("Ano de Publicação (" + livro.getAnoPublicacao() + "): ");
+                String novoAno = scanner.nextLine().trim();
+                if (!novoAno.isEmpty()) {
+                    livro.setAnoPublicacao(Integer.parseInt(novoAno));
+                }
+
+                System.out.print("Número de Páginas (" + livro.getNumPaginas() + "): ");
+                String novasPaginas = scanner.nextLine().trim();
+                if (!novasPaginas.isEmpty()) {
+                    livro.setNumPaginas(Integer.parseInt(novasPaginas));
+                }
             }
 
-            // Busca informações na API
-            IsbnService.LivroInfo info = isbnService.buscarIsbn(isbn);
-
-            // Cria e salva o livro
-            Livro livro = new Livro();
-            livro.setIsbn(isbn);
-            livro.setTitulo(info.getTitle());
-            livro.setAutor(String.join(", ", info.getAuthors()));
-            livro.setEditora(info.getPublisher());
-            livro.setAnoPublicacao(info.getYear());
-            livro.setNumPaginas(info.getPages());
-            livro.setSinopse(info.getSynopsis());
-
-            livroDAO.salvar(livro);
+            livroService.cadastrarLivro(livro);
             System.out.println("Livro cadastrado com sucesso!");
 
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Erro ao buscar dados do livro: " + e.getMessage());
+            System.out.println("Deseja cadastrar manualmente? (S/N)");
+            String resposta = scanner.nextLine().trim().toUpperCase();
+
+            if (resposta.equals("S")) {
+                cadastrarLivroManualmente(isbn);
+            }
+        } catch (IllegalArgumentException e) {
             System.out.println("Erro ao cadastrar livro: " + e.getMessage());
         }
     }
 
-    private static void cadastrarAmigo() {
-        System.out.print("Digite o nome do amigo: ");
-        String nome = scanner.nextLine();
-        System.out.print("Digite o telefone do amigo: ");
-        String telefone = scanner.nextLine();
-        
-        // Aqui podemos utilizar um DAO específico para amigos caso implementado
-        System.out.println("Amigo " + nome + " cadastrado com sucesso!");
+    private static void cadastrarLivroManualmente(String isbn) throws SQLException {
+        System.out.println("\n=== CADASTRO MANUAL DE LIVRO ===");
+
+        System.out.print("Título: ");
+        String titulo = scanner.nextLine().trim();
+
+        System.out.print("Autor: ");
+        String autor = scanner.nextLine().trim();
+
+        System.out.print("Editora: ");
+        String editora = scanner.nextLine().trim();
+
+        System.out.print("Ano de Publicação: ");
+        int anoPublicacao = Integer.parseInt(scanner.nextLine().trim());
+
+        System.out.print("Número de Páginas: ");
+        int numPaginas = Integer.parseInt(scanner.nextLine().trim());
+
+        Livro livro = new Livro();
+        livro.setIsbn(isbn);
+        livro.setTitulo(titulo);
+        livro.setAutor(autor);
+        livro.setEditora(editora);
+        livro.setAnoPublicacao(anoPublicacao);
+        livro.setNumPaginas(numPaginas);
+        livro.setStatusEmprestimo(Livro.StatusEmprestimo.DISPONIVEL);
+
+        livroService.cadastrarLivro(livro);
+        System.out.println("Livro cadastrado com sucesso!");
     }
-    
-    private static void emprestarLivro() {
+
+    private static void cadastrarAmigo() throws SQLException {
+        System.out.println("\n=== CADASTRO DE AMIGO ===");
+
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine().trim();
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine().trim();
+
+        System.out.print("Telefone: ");
+        String telefone = scanner.nextLine().trim();
+
         try {
-            System.out.print("Digite o ISBN do livro a ser emprestado: ");
-            String isbn = scanner.nextLine();
-            System.out.print("Digite o nome do amigo: ");
-            String nomeAmigo = scanner.nextLine();
-    
-            Livro livro = livroDAO.buscarPorIsbn(isbn)
-                                  .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado!"));
-    
-            if (livro.isEmprestado()) {
-                System.out.println("Livro já está emprestado!");
-                return;
-            }
-    
-            livro.setEmprestado(true);
-            livro.setAmigo(nomeAmigo);
-            livroDAO.atualizar(livro);
-    
-            System.out.println("Livro emprestado com sucesso a " + nomeAmigo + "!");
-        } catch (Exception e) {
-            System.out.println("Erro ao emprestar livro: " + e.getMessage());
+            Amigo amigo = new Amigo();
+            amigo.setNome(nome);
+            amigo.setEmail(email);
+            amigo.setTelefone(telefone);
+            amigo.setAtivo(true);
+
+            amigoService.cadastrarAmigo(amigo);
+            System.out.println("Amigo cadastrado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao cadastrar amigo: " + e.getMessage());
         }
     }
-    
-    private static void devolverLivro() {
+
+    private static void realizarEmprestimo() throws SQLException {
+        System.out.println("\n=== REALIZAR EMPRÉSTIMO ===");
+
+        System.out.print("ISBN do livro: ");
+        String isbn = scanner.nextLine().trim();
+
+        System.out.print("Email do amigo: ");
+        String email = scanner.nextLine().trim();
+
+        System.out.print("Dias para devolução: ");
+        int dias = Integer.parseInt(scanner.nextLine().trim());
+
         try {
-            System.out.print("Digite o ISBN do livro a ser devolvido: ");
-            String isbn = scanner.nextLine();
-    
-            Livro livro = livroDAO.buscarPorIsbn(isbn)
-                                  .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado!"));
-    
-            if (!livro.isEmprestado()) {
-                System.out.println("Este livro não está emprestado!");
-                return;
-            }
-    
-            livro.setEmprestado(false);
-            livro.setAmigo(null);
-            livroDAO.atualizar(livro);
-    
-            System.out.println("Livro devolvido com sucesso!");
-        } catch (Exception e) {
-            System.out.println("Erro ao devolver livro: " + e.getMessage());
+            emprestimoService.realizarEmprestimo(isbn, email, dias);
+            System.out.println("Empréstimo realizado com sucesso!");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Erro ao realizar empréstimo: " + e.getMessage());
         }
     }
-    
-    private static void listarLivros() {
-        System.out.println("\n=== Lista de Livros ===");
-        livroDAO.buscarTodos().forEach(livro -> {
+
+    private static void realizarDevolucao() throws SQLException {
+        System.out.println("\n=== REALIZAR DEVOLUÇÃO ===");
+
+        System.out.print("ISBN do livro: ");
+        String isbn = scanner.nextLine().trim();
+
+        try {
+            emprestimoService.realizarDevolucao(isbn);
+            System.out.println("Devolução realizada com sucesso!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro ao realizar devolução: " + e.getMessage());
+        }
+    }
+
+    private static void listarLivros() throws SQLException {
+        System.out.println("\n=== LISTA DE LIVROS ===");
+        List<Livro> livros = livroService.listarTodos();
+
+        if (livros.isEmpty()) {
+            System.out.println("Nenhum livro cadastrado.");
+            return;
+        }
+
+        for (Livro livro : livros) {
+            System.out.println("\nISBN: " + livro.getIsbn());
             System.out.println("Título: " + livro.getTitulo());
             System.out.println("Autor: " + livro.getAutor());
-            System.out.println("ISBN: " + livro.getIsbn());
-            System.out.println("Situação: " + (livro.isEmprestado() ? "Emprestado" : "Disponível"));
-            if (livro.isEmprestado()) {
-                System.out.println("Emprestado para: " + livro.getAmigo());
-            }
+            System.out.println("Editora: " + livro.getEditora());
+            System.out.println("Ano de Publicação: " + livro.getAnoPublicacao());
+            System.out.println("Número de Páginas: " + livro.getNumPaginas());
+            System.out.println("Status: " + livro.getStatusEmprestimo().getDescricao());
             System.out.println("------------------------");
-        });
+        }
     }
-    
-    
+
+    private static void listarAmigos() throws SQLException {
+        System.out.println("\n=== LISTA DE AMIGOS ===");
+        List<Amigo> amigos = amigoService.listarTodos();
+
+        if (amigos.isEmpty()) {
+            System.out.println("Nenhum amigo cadastrado.");
+            return;
+        }
+
+        for (Amigo amigo : amigos) {
+            System.out.println("\nNome: " + amigo.getNome());
+            System.out.println("Email: " + amigo.getEmail());
+            System.out.println("Telefone: " + amigo.getTelefone());
+            System.out.println("Status: " + (amigo.isAtivo() ? "Ativo" : "Inativo"));
+            System.out.println("------------------------");
+        }
+    }
+
+    private static void listarEmprestimos() throws SQLException {
+        System.out.println("\n=== LISTA DE EMPRÉSTIMOS ===");
+        List<Emprestimo> emprestimos = emprestimoService.listarTodos();
+
+        if (emprestimos.isEmpty()) {
+            System.out.println("Nenhum empréstimo registrado.");
+            return;
+        }
+
+        for (Emprestimo emprestimo : emprestimos) {
+            System.out.println("\nLivro: " + emprestimo.getLivro().getTitulo());
+            System.out.println("Amigo: " + emprestimo.getAmigo().getNome());
+            System.out.println("Data Empréstimo: " +
+                    emprestimo.getDataEmprestimo().format(formatter));
+            System.out.println("Data Devolução Prevista: " +
+                    emprestimo.getDataDevolucaoPrevista().format(formatter));
+            if (emprestimo.getDataDevolucaoReal() != null) {
+                System.out.println("Data Devolução Real: " +
+                        emprestimo.getDataDevolucaoReal().format(formatter));
+            }
+            System.out.println("Status: " + emprestimo.getStatus().getDescricao());
+            System.out.println("------------------------");
+        }
+    }
 }

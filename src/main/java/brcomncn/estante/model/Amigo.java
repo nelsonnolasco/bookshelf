@@ -8,6 +8,7 @@ public class Amigo {
     private String email;
     private String telefone;
     private LocalDateTime dataCadastro;
+    private boolean ativo;
 
     // Getters e Setters
 
@@ -47,8 +48,21 @@ public class Amigo {
     public LocalDateTime getDataCadastro() {
         return dataCadastro;
     }
+    
+    public boolean getAtivo() {
+        return ativo;
+    }
 
     public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+        
     }
 }

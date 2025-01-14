@@ -1,6 +1,5 @@
 package brcomncn.estante.model;
 
-import java.time.LocalDateTime;
 
 public class Livro {
     private Long id;
@@ -8,31 +7,40 @@ public class Livro {
     private String titulo;
     private String autor;
     private String editora;
-    private Integer anoPublicacao;
-    private Integer numPaginas;
-    private String sinopse;
+    private int anoPublicacao;
+    private int numPaginas;
     private StatusEmprestimo statusEmprestimo;
-    private LocalDateTime dataCadastro;
+    private String sinopse;
 
-    public boolean isEmprestado() {
-        return false;
+    public void setSinopse(String s) {
+        this.sinopse = s;
     }
-
-    public void setAmigo(String nomeAmigo) {
-    }
-
-    public void setEmprestado(boolean b) {
-
-    }
-
 
     public enum StatusEmprestimo {
-        DISPONIVEL, EMPRESTADO
+        DISPONIVEL("Disponível"),
+        EMPRESTADO("Emprestado");
+
+        private final String descricao;
+
+        StatusEmprestimo(String descricao) {
+            this.descricao = descricao;
+        }
+
+        public String getDescricao() {
+            return descricao;
+        }
+    }
+
+    public String getSinopse() {
+        return sinopse;
+    }
+    
+    // Construtores
+    public Livro() {
+        this.statusEmprestimo = StatusEmprestimo.DISPONIVEL;
     }
 
     // Getters e Setters
-
-
     public Long getId() {
         return id;
     }
@@ -73,28 +81,20 @@ public class Livro {
         this.editora = editora;
     }
 
-    public Integer getAnoPublicacao() {
+    public int getAnoPublicacao() {
         return anoPublicacao;
     }
 
-    public void setAnoPublicacao(Integer anoPublicacao) {
+    public void setAnoPublicacao(int anoPublicacao) {
         this.anoPublicacao = anoPublicacao;
     }
 
-    public Integer getNumPaginas() {
+    public int getNumPaginas() {
         return numPaginas;
     }
 
-    public void setNumPaginas(Integer numPaginas) {
+    public void setNumPaginas(int numPaginas) {
         this.numPaginas = numPaginas;
-    }
-
-    public String getSinopse() {
-        return sinopse;
-    }
-
-    public void setSinopse(String sinopse) {
-        this.sinopse = sinopse;
     }
 
     public StatusEmprestimo getStatusEmprestimo() {
@@ -105,11 +105,17 @@ public class Livro {
         this.statusEmprestimo = statusEmprestimo;
     }
 
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
+    @Override
+    public String toString() {
+        return "Livro{" +
+                "id=" + id +
+                ", isbn='" + isbn + '\'' +
+                ", titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", editora='" + editora + '\'' +
+                ", anoPublicacao=" + anoPublicacao +
+                ", numPaginas=" + numPaginas +
+                ", statusEmprestimo=" + statusEmprestimo +
+                '}';
     }
 }
