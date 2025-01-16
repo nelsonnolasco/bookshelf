@@ -8,7 +8,7 @@ public class ConnectionFactory {
     // Corrigido o nome do banco de dados na URL
     private static final String URL = "jdbc:mysql://localhost:3306/estante_livros?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
-    private static final String PASSWORD = "ncn262730"; // Colocar senha aqui
+    private static final String PASSWORD = "xxxxxx"; // Colocar senha aqui
 
     static {
         try {

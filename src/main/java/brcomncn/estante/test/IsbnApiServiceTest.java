@@ -19,14 +19,14 @@ public class IsbnApiServiceTest {
             Livro livro = service.converterParaLivro(response);
 
             System.out.println("\nInformações encontradas:");
-            System.out.println("Título: " + livro.getTitulo());
-            System.out.println("Autor: " + livro.getAutor());
-            System.out.println("Editora: " + livro.getEditora());
-            System.out.println("Ano: " + livro.getAnoPublicacao());
-            System.out.println("Páginas: " + livro.getNumPaginas());
+            System.out.println(STR."Título: \{livro.getTitulo()}");
+            System.out.println(STR."Autor: \{livro.getAutor()}");
+            System.out.println(STR."Editora: \{livro.getEditora()}");
+            System.out.println(STR."Ano: \{livro.getAnoPublicacao()}");
+            System.out.println(STR."Páginas: \{livro.getNumPaginas()}");
 
         } catch (Exception e) {
-            System.out.println("Erro ao buscar ISBN " + isbn + ": " + e.getMessage());
+            System.out.println(STR."Erro ao buscar ISBN \{isbn}: \{e.getMessage()}");
             e.printStackTrace();
         }
     }

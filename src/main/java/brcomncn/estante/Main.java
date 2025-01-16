@@ -63,16 +63,16 @@ public class Main {
             } catch (NumberFormatException e) {
                 System.out.println("Por favor, digite um número válido.");
             } catch (SQLException e) {
-                System.out.println("Erro ao acessar o banco de dados: " + e.getMessage());
+                System.out.println(STR."Erro ao acessar o banco de dados: \{e.getMessage()}");
             } catch (Exception e) {
-                System.out.println("Erro: " + e.getMessage());
+                System.out.println(STR."Erro: \{e.getMessage()}");
             }
         }
         scanner.close();
     }
 
     private static void exibirMenu() {
-        System.out.println("\n=== SISTEMA DE BIBLIOTECA ===");
+        System.out.println("\n=== SISTEMA DE BIBLIOTECA PESSOAL ===");
         System.out.println("1. Cadastrar Livro");
         System.out.println("2. Cadastrar Amigo");
         System.out.println("3. Realizar Empréstimo");
@@ -95,11 +95,11 @@ public class Main {
 
             // Mostra os dados encontrados e permite edição
             System.out.println("\nDados encontrados:");
-            System.out.println("Título: " + livro.getTitulo());
-            System.out.println("Autor: " + livro.getAutor());
-            System.out.println("Editora: " + livro.getEditora());
-            System.out.println("Ano de Publicação: " + livro.getAnoPublicacao());
-            System.out.println("Número de Páginas: " + livro.getNumPaginas());
+            System.out.println(STR."Título: \{livro.getTitulo()}");
+            System.out.println(STR."Autor: \{livro.getAutor()}");
+            System.out.println(STR."Editora: \{livro.getEditora()}");
+            System.out.println(STR."Ano de Publicação: \{livro.getAnoPublicacao()}");
+            System.out.println(STR."Número de Páginas: \{livro.getNumPaginas()}");
 
             System.out.println("\nDeseja editar algum dado? (S/N)");
             String resposta = scanner.nextLine().trim().toUpperCase();
@@ -107,31 +107,31 @@ public class Main {
             if (resposta.equals("S")) {
                 System.out.println("\nPressione ENTER para manter o valor atual");
 
-                System.out.print("Título (" + livro.getTitulo() + "): ");
+                System.out.print(STR."Título (\{livro.getTitulo()}): ");
                 String novoTitulo = scanner.nextLine().trim();
                 if (!novoTitulo.isEmpty()) {
                     livro.setTitulo(novoTitulo);
                 }
 
-                System.out.print("Autor (" + livro.getAutor() + "): ");
+                System.out.print(STR."Autor (\{livro.getAutor()}): ");
                 String novoAutor = scanner.nextLine().trim();
                 if (!novoAutor.isEmpty()) {
                     livro.setAutor(novoAutor);
                 }
 
-                System.out.print("Editora (" + livro.getEditora() + "): ");
+                System.out.print(STR."Editora (\{livro.getEditora()}): ");
                 String novaEditora = scanner.nextLine().trim();
                 if (!novaEditora.isEmpty()) {
                     livro.setEditora(novaEditora);
                 }
 
-                System.out.print("Ano de Publicação (" + livro.getAnoPublicacao() + "): ");
+                System.out.print(STR."Ano de Publicação (\{livro.getAnoPublicacao()}): ");
                 String novoAno = scanner.nextLine().trim();
                 if (!novoAno.isEmpty()) {
                     livro.setAnoPublicacao(Integer.parseInt(novoAno));
                 }
 
-                System.out.print("Número de Páginas (" + livro.getNumPaginas() + "): ");
+                System.out.print(STR."Número de Páginas (\{livro.getNumPaginas()}): ");
                 String novasPaginas = scanner.nextLine().trim();
                 if (!novasPaginas.isEmpty()) {
                     livro.setNumPaginas(Integer.parseInt(novasPaginas));
@@ -142,7 +142,7 @@ public class Main {
             System.out.println("Livro cadastrado com sucesso!");
 
         } catch (IOException | InterruptedException e) {
-            System.out.println("Erro ao buscar dados do livro: " + e.getMessage());
+            System.out.println(STR."Erro ao buscar dados do livro: \{e.getMessage()}");
             System.out.println("Deseja cadastrar manualmente? (S/N)");
             String resposta = scanner.nextLine().trim().toUpperCase();
 
@@ -150,7 +150,7 @@ public class Main {
                 cadastrarLivroManualmente(isbn);
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Erro ao cadastrar livro: " + e.getMessage());
+            System.out.println(STR."Erro ao cadastrar livro: \{e.getMessage()}");
         }
     }
 
@@ -207,7 +207,7 @@ public class Main {
             amigoService.cadastrarAmigo(amigo);
             System.out.println("Amigo cadastrado com sucesso!");
         } catch (IllegalArgumentException e) {
-            System.out.println("Erro ao cadastrar amigo: " + e.getMessage());
+            System.out.println(STR."Erro ao cadastrar amigo: \{e.getMessage()}");
         }
     }
 
@@ -227,7 +227,7 @@ public class Main {
             emprestimoService.realizarEmprestimo(isbn, email, dias);
             System.out.println("Empréstimo realizado com sucesso!");
         } catch (IllegalArgumentException | IllegalStateException e) {
-            System.out.println("Erro ao realizar empréstimo: " + e.getMessage());
+            System.out.println(STR."Erro ao realizar empréstimo: \{e.getMessage()}");
         }
     }
 
@@ -241,7 +241,7 @@ public class Main {
             emprestimoService.realizarDevolucao(isbn);
             System.out.println("Devolução realizada com sucesso!");
         } catch (IllegalArgumentException e) {
-            System.out.println("Erro ao realizar devolução: " + e.getMessage());
+            System.out.println(STR."Erro ao realizar devolução: \{e.getMessage()}");
         }
     }
 
@@ -255,13 +255,15 @@ public class Main {
         }
 
         for (Livro livro : livros) {
-            System.out.println("\nISBN: " + livro.getIsbn());
-            System.out.println("Título: " + livro.getTitulo());
-            System.out.println("Autor: " + livro.getAutor());
-            System.out.println("Editora: " + livro.getEditora());
-            System.out.println("Ano de Publicação: " + livro.getAnoPublicacao());
-            System.out.println("Número de Páginas: " + livro.getNumPaginas());
-            System.out.println("Status: " + livro.getStatusEmprestimo().getDescricao());
+            System.out.println(STR."""
+
+ISBN: \{livro.getIsbn()}""");
+            System.out.println(STR."Título: \{livro.getTitulo()}");
+            System.out.println(STR."Autor: \{livro.getAutor()}");
+            System.out.println(STR."Editora: \{livro.getEditora()}");
+            System.out.println(STR."Ano de Publicação: \{livro.getAnoPublicacao()}");
+            System.out.println(STR."Número de Páginas: \{livro.getNumPaginas()}");
+            System.out.println(STR."Status: \{livro.getStatusEmprestimo().getDescricao()}");
             System.out.println("------------------------");
         }
     }
@@ -276,10 +278,12 @@ public class Main {
         }
 
         for (Amigo amigo : amigos) {
-            System.out.println("\nNome: " + amigo.getNome());
-            System.out.println("Email: " + amigo.getEmail());
-            System.out.println("Telefone: " + amigo.getTelefone());
-            System.out.println("Status: " + (amigo.isAtivo() ? "Ativo" : "Inativo"));
+            System.out.println(STR."""
+
+Nome: \{amigo.getNome()}""");
+            System.out.println(STR."Email: \{amigo.getEmail()}");
+            System.out.println(STR."Telefone: \{amigo.getTelefone()}");
+            System.out.println(STR."Status: \{amigo.isAtivo() ? "Ativo" : "Inativo"}");
             System.out.println("------------------------");
         }
     }

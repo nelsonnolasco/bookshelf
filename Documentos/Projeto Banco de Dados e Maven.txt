@@ -1,0 +1,58 @@
+-- Criar o banco de dados
+CREATE DATABASE estante_livros;
+USE estante_livros;
+
+-- Tabela de livros
+CREATE TABLE livros (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    isbn VARCHAR(13) NOT NULL UNIQUE,
+    titulo VARCHAR(255) NOT NULL,
+    autor VARCHAR(255),
+    editora VARCHAR(100),
+    ano_publicacao INTEGER,
+    num_paginas INTEGER,
+    sinopse TEXT,
+    status_emprestimo ENUM('DISPONIVEL', 'EMPRESTADO') DEFAULT 'DISPONIVEL',
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de amigos (possíveis usuários para empréstimos)
+CREATE TABLE amigos (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    telefone VARCHAR(20),
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de empréstimos
+CREATE TABLE emprestimos (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    livro_id BIGINT NOT NULL,
+    amigo_id BIGINT NOT NULL,
+    data_emprestimo TIMESTAMP NOT NULL,
+    data_devolucao_prevista TIMESTAMP NOT NULL,
+    data_devolucao_real TIMESTAMP,
+    status ENUM('ATIVO', 'DEVOLVIDO', 'ATRASADO') DEFAULT 'ATIVO',
+    FOREIGN KEY (livro_id) REFERENCES livros(id),
+    FOREIGN KEY (amigo_id) REFERENCES amigos(id)
+);
+
+
+Estrutura do Projeto Maven
+
+estante-livros/
+├── pom.xml
+├── src/
+    ├── main/
+        ├── java/
+            ├── com/
+                ├── estante/
+                    ├── config/
+                    ├── model/
+                    ├── dao/
+                    ├── service/
+                    ├── util/
+                    └── Main.java
+        └── resources/
+            └── database.properties
